@@ -210,8 +210,8 @@ class TestPolicyToProbabilities:
     def test_policy_to_probabilities_no_moves(self):
         """Test policy conversion when no legal moves (stalemate)"""
         decoder = MoveDecoder()
-        # Stalemate position
-        board = chess.Board(fen="k7/8/1K6/8/8/8/8/1Q6 b - - 0 1")
+        # Stalemate: king on a8, queen on c7, white king on b6
+        board = chess.Board(fen="k7/2Q5/1K6/8/8/8/8/8 b - - 0 1")
 
         policy = decoder.create_random_policy()
         move_probs = decoder.policy_to_move_probabilities(policy, board)
@@ -302,8 +302,9 @@ class TestMoveSelection:
     def test_select_move_no_legal_moves(self):
         """Test move selection when no legal moves"""
         decoder = MoveDecoder()
-        # Stalemate
-        board = chess.Board(fen="k7/8/1K6/8/8/8/8/1Q6 b - - 0 1")
+        # Stalemate: king on a8, queen on c7, white king on b6
+        # Black king cannot move (all squares controlled) but not in check
+        board = chess.Board(fen="k7/2Q5/1K6/8/8/8/8/8 b - - 0 1")
 
         policy = decoder.create_random_policy()
 
@@ -354,8 +355,8 @@ class TestTopMoves:
     def test_get_top_moves_empty_position(self):
         """Test top moves with no legal moves"""
         decoder = MoveDecoder()
-        # Stalemate
-        board = chess.Board(fen="k7/8/1K6/8/8/8/8/1Q6 b - - 0 1")
+        # Stalemate: king on a8, queen on c7, white king on b6
+        board = chess.Board(fen="k7/2Q5/1K6/8/8/8/8/8 b - - 0 1")
 
         policy = decoder.create_random_policy()
         top_moves = decoder.get_top_moves(policy, board, top_k=5)
