@@ -1,0 +1,61 @@
+# ChessEngine Configuration File
+
+# Model Architecture
+model:
+  input_planes: 18
+  conv_filters: [64, 64, 128]
+  policy_output: 4672
+  value_hidden: 32
+
+# Monte Carlo Tree Search Parameters
+mcts:
+  num_simulations: 50          # Number of MCTS simulations per move (low for speed)
+  c_puct: 1.5                   # Exploration constant
+  temperature: 1.0              # Sampling temperature
+  dirichlet_alpha: 0.3          # Dirichlet noise alpha
+  dirichlet_epsilon: 0.25       # Dirichlet noise weight
+
+# Training Parameters
+training:
+  num_iterations: 20            # Number of self-play → train cycles
+  games_per_iteration: 50       # Games generated per iteration
+  batch_size: 64
+  epochs_per_iteration: 10
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  replay_buffer_size: 10000     # Maximum number of game states stored
+
+  # Loss weights
+  policy_loss_weight: 1.0
+  value_loss_weight: 1.0
+
+  # Optimizer
+  optimizer: 'adam'             # adam or sgd
+  momentum: 0.9                 # for SGD
+
+# Evaluation Parameters
+evaluation:
+  eval_games: 20                # Games vs random for validation
+  puzzle_dataset: "mate_in_2"   # Puzzle difficulty level
+  eval_frequency: 5             # Evaluate every N iterations
+
+# System Configuration
+system:
+  device: 'auto'                # 'auto', 'cpu', 'cuda'
+  num_workers: 4                # Parallel workers for self-play
+  seed: 42                      # Random seed for reproducibility
+
+# Paths
+paths:
+  data_dir: 'data'
+  checkpoints_dir: 'data/checkpoints'
+  logs_dir: 'data/logs'
+  games_dir: 'data/games'
+  training_data_dir: 'data/training_data'
+
+# Logging
+logging:
+  level: 'INFO'                 # DEBUG, INFO, WARNING, ERROR
+  log_to_file: true
+  log_to_console: true
+  tensorboard: false            # Enable tensorboard logging
