@@ -104,8 +104,8 @@ class MoveDecoder:
                 plane_idx += 1
 
             # Underpromotions (9 planes: 3 directions × 3 piece types)
-            # Directions: NW, N, NE for white pawns (or SW, S, SE for black)
-            underpromote_directions = [(-1, 0), (0, 0), (1, 0)]  # relative to pawn move
+            # Directions: NW, N, NE for white pawns (left, straight, right)
+            underpromote_directions = [-1, 0, 1]  # column offsets only
             underpromote_pieces = [chess.KNIGHT, chess.BISHOP, chess.ROOK]
 
             for dcol in underpromote_directions:
