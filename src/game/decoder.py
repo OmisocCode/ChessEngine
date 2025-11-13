@@ -269,7 +269,11 @@ class MoveDecoder:
 
         # Sample according to probabilities
         moves = list(move_probs.keys())
-        probs = list(move_probs.values())
+        probs = np.array(list(move_probs.values()))
+
+        # Renormalize to ensure probabilities sum to exactly 1.0
+        # (floating point errors can cause sum to be 0.9999999 or 1.0000001)
+        probs = probs / probs.sum()
 
         selected_move = np.random.choice(moves, p=probs)
         return selected_move
