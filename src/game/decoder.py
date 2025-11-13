@@ -48,21 +48,28 @@ class MoveDecoder:
         self.policy_index_to_move_info = {}
 
         # Direction vectors for queen moves (N, NE, E, SE, S, SW, W, NW)
+        # Format: (drow, dcol) where row increases upward (rank 1→8)
         self.queen_directions = [
-            (0, 1),   # North
-            (1, 1),   # NE
-            (1, 0),   # East
-            (1, -1),  # SE
-            (0, -1),  # South
-            (-1, -1), # SW
-            (-1, 0),  # West
-            (-1, 1),  # NW
+            (1, 0),   # North (row+)
+            (1, 1),   # NE (row+, col+)
+            (0, 1),   # East (col+)
+            (-1, 1),  # SE (row-, col+)
+            (-1, 0),  # South (row-)
+            (-1, -1), # SW (row-, col-)
+            (0, -1),  # West (col-)
+            (1, -1),  # NW (row+, col-)
         ]
 
-        # Knight move offsets
+        # Knight move offsets (drow, dcol)
         self.knight_moves = [
-            (2, 1), (1, 2), (-1, 2), (-2, 1),
-            (-2, -1), (-1, -2), (1, -2), (2, -1)
+            (2, 1),   # Up 2, right 1
+            (1, 2),   # Up 1, right 2
+            (-1, 2),  # Down 1, right 2
+            (-2, 1),  # Down 2, right 1
+            (-2, -1), # Down 2, left 1
+            (-1, -2), # Down 1, left 2
+            (1, -2),  # Up 1, left 2
+            (2, -1)   # Up 2, left 1
         ]
 
         # Build mappings for each square
@@ -104,8 +111,8 @@ class MoveDecoder:
                 plane_idx += 1
 
             # Underpromotions (9 planes: 3 directions × 3 piece types)
-            # Directions: NW, N, NE for white pawns (or SW, S, SE for black)
-            underpromote_directions = [(-1, 0), (0, 0), (1, 0)]  # relative to pawn move
+            # Directions: NW, N, NE for white pawns (left, straight, right)
+            underpromote_directions = [-1, 0, 1]  # column offsets only
             underpromote_pieces = [chess.KNIGHT, chess.BISHOP, chess.ROOK]
 
             for dcol in underpromote_directions:
