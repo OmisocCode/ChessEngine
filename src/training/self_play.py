@@ -338,8 +338,10 @@ class SelfPlayGame:
 
         # Fill in probabilities for legal moves
         for move, prob in policy_dict.items():
-            # Get policy index for this move
-            policy_idx = self.decoder.move_to_policy_index(move, board)
+            # Get policy index for this move using the decoder's lookup table
+            # The key format is (from_square, to_square, promotion)
+            move_key = (move.from_square, move.to_square, move.promotion)
+            policy_idx = self.decoder.move_to_policy_index.get(move_key)
 
             if policy_idx is not None:
                 policy_vector[policy_idx] = prob
