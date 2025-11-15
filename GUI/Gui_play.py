@@ -251,96 +251,75 @@ class PlayFrame(tk.Frame):
         self.status_label.pack(fill='x', pady=(10, 0))
 
     def create_board(self, parent):
-        """Crea scacchiera grafica"""
-        # Board frame
-        board_frame = tk.Frame(parent, bg='#2C3E50', padx=10, pady=10)
+        """Crea scacchiera grafica compatta"""
+        # Board frame con padding ridotto
+        board_frame = tk.Frame(parent, bg='#2C3E50', padx=5, pady=5)
         board_frame.pack()
 
         # Coordinate labels
         coord_frame = tk.Frame(board_frame, bg='#2C3E50')
         coord_frame.grid(row=0, column=0)
 
-        # Top file labels (a-h)
+        # Top file labels (a-h) - più compatti
         file_label_top = tk.Frame(coord_frame, bg='#2C3E50')
         file_label_top.grid(row=0, column=1)
         for file_idx, file_name in enumerate('abcdefgh'):
             tk.Label(
                 file_label_top,
                 text=file_name,
-                font=('Helvetica', 10, 'bold'),
+                font=('Helvetica', 8, 'bold'),
                 bg='#2C3E50',
                 fg='white',
-                width=5
+                width=4
             ).grid(row=0, column=file_idx)
 
-        # Left rank labels (8-1)
+        # Left rank labels (8-1) - più compatti
         rank_label_left = tk.Frame(coord_frame, bg='#2C3E50')
         rank_label_left.grid(row=1, column=0)
         for rank_idx, rank_name in enumerate('87654321'):
             tk.Label(
                 rank_label_left,
                 text=rank_name,
-                font=('Helvetica', 10, 'bold'),
+                font=('Helvetica', 8, 'bold'),
                 bg='#2C3E50',
                 fg='white',
-                height=2
+                width=2
             ).grid(row=rank_idx, column=0)
 
-        # Board squares
-        board_squares = tk.Frame(coord_frame, bg='black', padx=2, pady=2)
+        # Board squares - più compatti
+        board_squares = tk.Frame(coord_frame, bg='black', padx=1, pady=1)
         board_squares.grid(row=1, column=1)
 
-        # Create squares
+        # Create squares con pezzi più piccoli
         for rank in range(8):
             for file in range(8):
-                square = chess.square(file, 7 - rank)  # Flip rank for display
+                square = chess.square(file, 7 - rank)
 
                 # Square color
                 is_light = (rank + file) % 2 == 0
                 bg_color = '#F0D9B5' if is_light else '#B58863'
 
-                # Create button
+                # Create button - dimensioni ridotte
                 btn = tk.Button(
                     board_squares,
                     text='',
-                    font=('Arial Unicode MS', 32),
+                    font=('Arial Unicode MS', 24),  # Font più piccolo
                     width=2,
                     height=1,
                     bg=bg_color,
                     activebackground=bg_color,
                     relief='flat',
                     cursor='hand2',
+                    padx=2,
+                    pady=2,
                     command=lambda sq=square: self.on_square_click(sq)
                 )
-                btn.grid(row=rank, column=file, padx=1, pady=1)
+                btn.grid(row=rank, column=file, padx=0, pady=0)
 
                 self.square_buttons[square] = btn
 
-        # Bottom file labels
-        file_label_bottom = tk.Frame(coord_frame, bg='#2C3E50')
-        file_label_bottom.grid(row=2, column=1)
-        for file_idx, file_name in enumerate('abcdefgh'):
-            tk.Label(
-                file_label_bottom,
-                text=file_name,
-                font=('Helvetica', 10, 'bold'),
-                bg='#2C3E50',
-                fg='white',
-                width=5
-            ).grid(row=0, column=file_idx)
-
-        # Right rank labels
-        rank_label_right = tk.Frame(coord_frame, bg='#2C3E50')
-        rank_label_right.grid(row=1, column=2)
-        for rank_idx, rank_name in enumerate('87654321'):
-            tk.Label(
-                rank_label_right,
-                text=rank_name,
-                font=('Helvetica', 10, 'bold'),
-                bg='#2C3E50',
-                fg='white',
-                height=2
-            ).grid(row=rank_idx, column=0)
+        # Bottom file labels - omessi per salvare spazio verticale
+        # Right rank labels - omessi per salvare spazio orizzontale
 
         # Update board display
         self.update_board_display()
