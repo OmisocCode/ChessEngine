@@ -293,7 +293,9 @@ class PuzzleTester:
                 'solved': board.is_checkmate(),  # True se già matto
                 'ai_move': None,
                 'correct_move': None,
-                'matches': board.is_checkmate()
+                'matches': board.is_checkmate(),
+                'category': puzzle.category,
+                'difficulty': puzzle.difficulty
             }
 
         # Usa MCTS per trovare mossa
