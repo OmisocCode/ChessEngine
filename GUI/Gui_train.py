@@ -365,62 +365,53 @@ If CUDA not available, falls back to CPU.'''
 
     def create_config_tab(self, parent):
         """Crea tab configurazione"""
-        # Scrollable frame
-        canvas = tk.Canvas(parent, bg='white')
-        scrollbar = ttk.Scrollbar(parent, orient="vertical", command=canvas.yview)
-        scrollable_frame = tk.Frame(canvas, bg='white')
+        # Configure grid weights
+        parent.grid_rowconfigure(0, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
 
-        scrollable_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(scrollregistry=canvas.bbox("all"))
-        )
+        # Main frame with grid
+        main_frame = tk.Frame(parent, bg='white')
+        main_frame.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
 
-        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
+        # Create parameter inputs in grid layout
+        self.create_parameter_inputs(main_frame)
 
-        # Pack scrollbar and canvas
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-
-        # Create parameter inputs
-        self.create_parameter_inputs(scrollable_frame)
-
-        # Buttons frame
+        # Buttons frame at bottom
         button_frame = tk.Frame(parent, bg='white')
-        button_frame.pack(side='bottom', fill='x', pady=10)
+        button_frame.grid(row=1, column=0, sticky='ew', padx=10, pady=5)
 
         # Buttons
         ttk.Button(
             button_frame,
-            text="Load Configuration",
+            text="Load Config",
             command=self.load_configuration
-        ).pack(side='left', padx=5)
+        ).grid(row=0, column=0, padx=3)
 
         ttk.Button(
             button_frame,
-            text="Save Configuration",
+            text="Save Config",
             command=self.save_configuration
-        ).pack(side='left', padx=5)
+        ).grid(row=0, column=1, padx=3)
 
         ttk.Button(
             button_frame,
-            text="Reset to Defaults",
+            text="Reset",
             command=self.reset_to_defaults
-        ).pack(side='left', padx=5)
+        ).grid(row=0, column=2, padx=3)
 
         # Start button (right side)
         self.start_button = ttk.Button(
             button_frame,
             text="▶ Start Training",
-            command=self.start_training,
-            style='Accent.TButton'
+            command=self.start_training
         )
-        self.start_button.pack(side='right', padx=5)
+        self.start_button.grid(row=0, column=3, padx=3, sticky='e')
+        button_frame.grid_columnconfigure(3, weight=1)
 
     def create_parameter_inputs(self, parent):
-        """Crea inputs per tutti i parametri"""
-        # Group parameters
-        groups = {
+        """Crea inputs per tutti i parametri in layout a 2 colonne"""
+        # Group parameters in 2 columns
+        left_groups = {
             'Training Iterations': [
                 'num_iterations', 'games_per_iteration',
                 'training_batches', 'batch_size'
@@ -428,55 +419,81 @@ If CUDA not available, falls back to CPU.'''
             'MCTS Configuration': [
                 'mcts_simulations', 'mcts_c_puct', 'temperature_threshold'
             ],
+        }
+
+        right_groups = {
             'Neural Network': [
                 'learning_rate', 'weight_decay'
             ],
-            'Data Management': [
-                'replay_buffer_size'
-            ],
-            'Checkpointing': [
-                'save_every', 'keep_checkpoints'
-            ],
-            'System': [
-                'device'
+            'Data & System': [
+                'replay_buffer_size', 'save_every', 'keep_checkpoints', 'device'
             ]
         }
 
-        for group_name, param_keys in groups.items():
-            # Group frame
+        # Left column
+        left_col = tk.Frame(parent, bg='white')
+        left_col.grid(row=0, column=0, sticky='nsew', padx=5)
+
+        row_idx = 0
+        for group_name, param_keys in left_groups.items():
             group_frame = tk.LabelFrame(
-                parent,
+                left_col,
                 text=group_name,
-                font=('Helvetica', 12, 'bold'),
+                font=('Helvetica', 11, 'bold'),
                 bg='white',
                 fg='#2C3E50',
-                padx=15,
-                pady=10
+                padx=10,
+                pady=5
             )
-            group_frame.pack(fill='x', padx=10, pady=10)
+            group_frame.grid(row=row_idx, column=0, sticky='ew', pady=5)
+            row_idx += 1
 
             for param_key in param_keys:
                 self.create_parameter_input(group_frame, param_key)
 
+        # Right column
+        right_col = tk.Frame(parent, bg='white')
+        right_col.grid(row=0, column=1, sticky='nsew', padx=5)
+
+        row_idx = 0
+        for group_name, param_keys in right_groups.items():
+            group_frame = tk.LabelFrame(
+                right_col,
+                text=group_name,
+                font=('Helvetica', 11, 'bold'),
+                bg='white',
+                fg='#2C3E50',
+                padx=10,
+                pady=5
+            )
+            group_frame.grid(row=row_idx, column=0, sticky='ew', pady=5)
+            row_idx += 1
+
+            for param_key in param_keys:
+                self.create_parameter_input(group_frame, param_key)
+
+        # Configure column weights
+        parent.grid_columnconfigure(0, weight=1)
+        parent.grid_columnconfigure(1, weight=1)
+
     def create_parameter_input(self, parent, param_key):
-        """Crea input per un singolo parametro"""
+        """Crea input per un singolo parametro con grid layout"""
         param_def = self.param_definitions[param_key]
 
         # Row frame
         row_frame = tk.Frame(parent, bg='white')
-        row_frame.pack(fill='x', pady=5)
+        row_frame.pack(fill='x', pady=2)
 
-        # Label
+        # Label (più compatta)
         label = tk.Label(
             row_frame,
             text=param_def['label'] + ":",
-            font=('Helvetica', 10),
+            font=('Helvetica', 9),
             bg='white',
             fg='#34495E',
-            width=30,
             anchor='w'
         )
-        label.pack(side='left')
+        label.grid(row=0, column=0, sticky='w', padx=(0, 5))
 
         # Input based on type
         if param_def['type'] == 'choice':
@@ -487,43 +504,47 @@ If CUDA not available, falls back to CPU.'''
                 textvariable=var,
                 values=param_def['choices'],
                 state='readonly',
-                width=15
+                width=10
             )
         elif param_def['type'] in ['int', 'float']:
             # Entry
             var = tk.StringVar(value=str(param_def['default']))
-            input_widget = ttk.Entry(row_frame, textvariable=var, width=15)
+            input_widget = ttk.Entry(row_frame, textvariable=var, width=10)
 
-        input_widget.pack(side='left', padx=5)
+        input_widget.grid(row=0, column=1, padx=2)
 
         # Store variable
         self.params[param_key] = var
 
-        # Help button
+        # Help button (più piccolo)
         help_btn = tk.Button(
             row_frame,
             text="?",
             command=lambda: self.show_param_help(param_key),
             bg='#3498DB',
             fg='white',
-            font=('Helvetica', 9, 'bold'),
+            font=('Helvetica', 8, 'bold'),
             width=2,
+            height=1,
             relief='flat',
             cursor='hand2'
         )
-        help_btn.pack(side='left', padx=5)
+        help_btn.grid(row=0, column=2, padx=2)
 
-        # Value indicator (for int/float)
+        # Value range (più piccolo e compatto)
         if param_def['type'] in ['int', 'float']:
             range_text = f"({param_def['min']}-{param_def['max']})"
             range_label = tk.Label(
                 row_frame,
                 text=range_text,
-                font=('Helvetica', 9),
+                font=('Helvetica', 8),
                 bg='white',
                 fg='#95A5A6'
             )
-            range_label.pack(side='left', padx=5)
+            range_label.grid(row=0, column=3, padx=2)
+
+        # Configure column weights
+        row_frame.grid_columnconfigure(0, weight=1)
 
     def show_param_help(self, param_key):
         """Mostra help dialog per parametro"""

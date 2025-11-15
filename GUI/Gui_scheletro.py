@@ -44,7 +44,7 @@ class ChessEngineApp(tk.Tk):
 
         # Window config
         self.title("ChessEngine AI - Training & Evaluation GUI")
-        self.geometry("1200x800")
+        self.geometry("1400x750")  # Più larga e meno alta
 
         # Centra la finestra
         self.center_window()
