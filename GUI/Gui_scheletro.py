@@ -120,47 +120,49 @@ class ChessEngineApp(tk.Tk):
         help_menu.add_command(label="Documentation", command=self.show_docs)
 
     def create_sidebar(self):
-        """Crea sidebar con navigazione"""
-        sidebar = tk.Frame(self, bg='#2C3E50', width=200)
-        sidebar.pack(side="left", fill="y")
+        """Crea toolbar orizzontale con navigazione"""
+        toolbar = tk.Frame(self, bg='#2C3E50', height=50)
+        toolbar.pack(side="top", fill="x")
+        toolbar.grid_propagate(False)
 
-        # Logo/Title
+        # Logo/Title (a sinistra)
         title_label = tk.Label(
-            sidebar,
+            toolbar,
             text="ChessEngine AI",
             bg='#2C3E50',
             fg='white',
-            font=('Helvetica', 14, 'bold'),
-            pady=20
+            font=('Helvetica', 12, 'bold'),
+            padx=15
         )
-        title_label.pack()
+        title_label.grid(row=0, column=0, sticky='w', padx=10, pady=8)
 
-        # Separator
-        tk.Frame(sidebar, height=2, bg='#34495E').pack(fill='x', padx=10)
+        # Separator verticale
+        tk.Frame(toolbar, width=2, bg='#34495E').grid(row=0, column=1, sticky='ns', pady=8)
 
-        # Navigation buttons
+        # Navigation buttons (orizzontali)
         buttons = [
             ("🏠 Home", lambda: self.show_frame("Welcome")),
             ("🎓 Training", self.show_training),
             ("📊 Statistics", self.show_statistics),
-            ("♟️  Play vs AI", self.show_play),
+            ("♟️ Play", self.show_play),
         ]
 
-        for text, command in buttons:
+        for idx, (text, command) in enumerate(buttons):
             btn = tk.Button(
-                sidebar,
+                toolbar,
                 text=text,
                 command=command,
                 bg='#34495E',
                 fg='white',
-                font=('Helvetica', 11),
+                font=('Helvetica', 10),
                 relief='flat',
-                pady=15,
+                padx=15,
+                pady=5,
                 cursor='hand2',
                 activebackground='#1ABC9C',
                 activeforeground='white'
             )
-            btn.pack(fill='x', padx=5, pady=2)
+            btn.grid(row=0, column=idx+2, padx=2, pady=8)
 
             # Hover effects
             btn.bind('<Enter>', lambda e, b=btn: b.config(bg='#1ABC9C'))
